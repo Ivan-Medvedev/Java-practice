@@ -9,7 +9,10 @@ import java.util.List;
 
 public class ServiceDAOImpl implements ServiceDAO {
     public Service findById(int id) {
-        return HibernateSessionFactoryUtil.getSessionFactory().openSession().get(Service.class, id);
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Service service = session.get(Service.class, id);
+        session.close();
+        return service;
     }
 
     public void save(Service service) {
@@ -37,7 +40,10 @@ public class ServiceDAOImpl implements ServiceDAO {
     }
 
     public List<Service> findAll() {
-        List<Service> services = (List<Service>)  HibernateSessionFactoryUtil.getSessionFactory().openSession().createQuery("From Service").list();
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        List<Service> services = (List<Service>)  session.createQuery("From Service").list();
+        session.close();
         return services;
     }
 }

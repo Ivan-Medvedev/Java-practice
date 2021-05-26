@@ -9,7 +9,10 @@ import java.util.List;
 
 public class ClientDAOImpl implements ClientDAO {
     public Client findById(int id) {
-        return HibernateSessionFactoryUtil.getSessionFactory().openSession().get(Client.class, id);
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Client client = session.get(Client.class, id);
+        session.close();
+        return client;
     }
 
     public void save(Client client) {
@@ -41,7 +44,9 @@ public class ClientDAOImpl implements ClientDAO {
     }
 
     public List<Client> findAll() {
-        List<Client> clients = (List<Client>)  HibernateSessionFactoryUtil.getSessionFactory().openSession().createQuery("From Client").list();
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        List<Client> clients = (List<Client>)  session.createQuery("From Client").list();
+        session.close();
         return clients;
     }
 }

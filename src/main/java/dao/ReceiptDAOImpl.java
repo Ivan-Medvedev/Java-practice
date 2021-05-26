@@ -9,7 +9,10 @@ import java.util.List;
 
 public class ReceiptDAOImpl implements ReceiptDAO {
     public Receipt findById(int id) {
-        return HibernateSessionFactoryUtil.getSessionFactory().openSession().get(Receipt.class, id);
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Receipt receipt = session.get(Receipt.class, id);
+        session.close();
+        return receipt;
     }
 
     public void save(Receipt receipt) {
@@ -37,7 +40,10 @@ public class ReceiptDAOImpl implements ReceiptDAO {
     }
 
     public List<Receipt> findAll() {
-        List<Receipt> receipts = (List<Receipt>)  HibernateSessionFactoryUtil.getSessionFactory().openSession().createQuery("From Receipt").list();
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        List<Receipt> receipts = (List<Receipt>)  session.createQuery("From Receipt").list();
+        session.close();
         return receipts;
     }
 }
